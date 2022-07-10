@@ -131,8 +131,9 @@ setModeB(false)
 <ButtonWrapper>
     <Button onClick={()=>setSyringe(50)}>20 ml</Button>
     <Button onClick={()=>setSyringe(20)} >50 ml</Button>
-</ButtonWrapper>
-<Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button></>
+</ButtonWrapper>{modeA ? dose &&syringe  > 0 ?  <Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button> : '' :  dose && syringe && weight >0 ? <Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button> : ''}
+
+</>
     }
     </Wrapper>
    

@@ -3,19 +3,24 @@ import styled, {css} from 'styled-components'
 
 const Header = styled.div`
 width: 100%;
-height: 70px;
+margin-bottom: 85px;
 background-color: transparent;
 text-align: center;
 color:${(props)=>props.theme.colors.onyx};
-font-size: ${(props)=>props.theme.fontSizes.large};
+font-size: ${(props)=>props.theme.fontSizes.small};
 font-weight: 900;
 text-transform: uppercase;
+@media (orientation:landscape){
+margin-bottom: 5px;
+}
 `
 const ButtonWrapper = styled.div`
 width: 100%;
 display: flex;
 flex-direction: row;
-justify-content: space-around;
+flex-wrap: wrap;
+
+
 `
 const Button = styled.button`
 background-color: ${(props)=>props.theme.colors.medBlue};
@@ -24,11 +29,11 @@ text-transform: uppercase;
 text-align: center;
 font-weight: bold;
 font-size:12px;
-padding: 15px 30px;
+padding: 13px 30px;
 min-width: 150px;
 border: none;
 border-radius: 20px;
-margin:25px auto;
+margin:5px auto;
 ${props => props.close && css`
     background-color:${({theme})=>props.theme.colors.red};
     
@@ -81,9 +86,9 @@ flex-direction: column;
 align-items: center;
 `
 const ModalA =() => {
-    const [weight,setWeight] = useState(0)
-    const [dose,setDose] = useState(0)
-    const [syringe,setSyringe] = useState(0)
+    const [weight,setWeight] = useState(null)
+    const [dose,setDose] = useState(null)
+    const [syringe,setSyringe] = useState(null)
     const [resultVisible, setResultVisible] = useState(false)
     const [modeA, setModeA] = useState(true)
     const [modeB, setModeB] = useState(false)
@@ -97,21 +102,29 @@ setModeB(false)
     setModeB(true)
        }
        const handleClear =()=>{
-        setWeight(0)
-        setDose(0)
+        setWeight('')
+        setDose('')
+        setSyringe('')
         setResultVisible(false)
        }
+
+      const handleReset = (e) => {
+       
+        setWeight('')
+        setDose('')
+        setSyringe('')
+      }
   return (
     <>
     <Wrapper>
     {resultVisible ? <ResultWrapper>
-        {modeA ? <p>Do strzykawki {syringe===50 ? "20" : "50"} ml naciągnij 1 mg adrenaliny. Przepływ na pompie infuzyjnej ustaw na {dose*60/syringe}/h
+        {modeA ? <p>Do strzykawki {syringe===50 ? "20" : "50"} ml naciągnij 1 mg adrenaliny. Przepływ na pompie infuzyjnej ustaw na {dose*60/syringe}ml/h
         </p> :
-        <p>Do strzykawki {syringe===50 ? "20" : "50"} ml naciągnij 1 mg adrenaliny. Przepływ na pompie infuzyjnej ustaw na {dose*weight*60/syringe}/h
+        <p>Do strzykawki {syringe===50 ? "20" : "50"} ml naciągnij 1 mg adrenaliny. Przepływ na pompie infuzyjnej ustaw na {dose*weight*60/syringe}ml/h
         </p>
         
         }
-    <Button close onClick={()=>handleClear()}>Zmień wyniki</Button>
+    <Button close onClick={()=>handleClear()}>Zamknij</Button>
     </ResultWrapper> : 
     <> <Header>
     <p>adrenalina</p>
@@ -125,21 +138,39 @@ setModeB(false)
     <Dose>Dawak 0.05-0.5 mikrogram/kg/min</Dose>
 }
 
-<MedInput type='number'onChange={(e)=>setDose(e.target.value)} placeholder='Podaj dawkę'/>
-{modeB ?<MedInput type='number' onChange={(e)=>setWeight(e.target.value)} placeholder='Podaj wagę pacjenta'/> :''}
+<MedInput value={dose}  type='number'onChange={(e)=>setDose(e.target.value)} placeholder='Podaj dawkę'/>
+{modeB ?<MedInput value={weight} type='number' onChange={(e)=>setWeight(e.target.value)} placeholder='Podaj wagę pacjenta'/> :''}
 <Dose>Wybierz strzykawkę</Dose>
+
 <ButtonWrapper>
-    <Button onClick={()=>setSyringe(50)}>20 ml</Button>
-    <Button onClick={()=>setSyringe(20)} >50 ml</Button>
-</ButtonWrapper>{modeA ? dose &&syringe  > 0 ?  <Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button> : '' :  dose && syringe && weight >0 ? <Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button> : ''}
+{modeA ? dose &&syringe  > 0 ? 
+<>
+<Button close onClick={()=>handleReset()}>Resetuj</Button>
+<Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button>
+</>
+   : 
+<>
+<Button onClick={()=>setSyringe(50)}>20 ml</Button>
+<Button onClick={()=>setSyringe(20)} >50 ml</Button>
+</>
+
+ :  dose && syringe && weight >0 ? 
+ <>
+<Button close onClick={()=>handleReset()}>Resetuj</Button>
+<Button send onClick={()=>setResultVisible(!resultVisible)}>Licz</Button>
+</> :
+ <>
+ <Button onClick={()=>setSyringe(50)}>20 ml</Button>
+ <Button onClick={()=>setSyringe(20)} >50 ml</Button>
+ </>
+  }
+
+</ButtonWrapper>
 
 </>
     }
     </Wrapper>
    
-    
-    
-    
     </>
    
   )
